@@ -1,4 +1,4 @@
-version: '3.1'
+version: '2'
 
 services:
     joomla:
@@ -7,11 +7,28 @@ services:
             - joomladb:mysql
         ports:
             - 8080:80
+        volumes:
+            - /data/prj/joomla_www:/var/www/html
         environment:
           JOOMLA_DB_HOST: joomladb
           JOOMLA_DB_PASSWORD: changeme
+        restart: always
 
     joomladb:
         image: mysql:5.6
         environment:
-            MYSQL_ROOT_PASSWORD: changeme
+        MYSQL_ROOT_PASSWORD: changeme
+        volumes:
+            - /data/prj/mysql:/var/lib/mysql
+        restart: always
+    phpmyadmin: 
+        image: phpmyadmin/phpmyadmin
+        environment:
+            - PMA_ARBITRARY=1
+        restart: always
+        ports:
+            - 8889:80
+        volumes:
+            - /data/prj/phpmyadmin/sessions:/sessions
+        links:
+            - joomladb:mysql
